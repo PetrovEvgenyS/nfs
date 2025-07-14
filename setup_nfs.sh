@@ -15,6 +15,15 @@ NFS_SERVER_IP="10.100.10.3"     # Укажите IP-адрес сервера NF
 SUBNET="10.100.10.0/24"         # Разрешённая подсеть
 
 
+# ------------------------------------------------------------------------------------------
+
+
+# Проверка запуска c sudo
+if [ "$EUID" -ne 0 ]; then
+    errorprint "Скрипт должен быть запущен через sudo!"
+    exit 1
+fi
+
 # Функция: установка и настройка NFS-сервер
 setup_nfs_server() {
     magentaprint "Устанавливаем NFS-сервер..."
@@ -52,6 +61,13 @@ setup_nfs_client() {
     magentaprint "Создаём точку монтирования..."
     mkdir -p $NFS_CLIENT_MOUNT
     ls -lah /mnt/
+
+    # Проверка, не смонтирована ли уже директория
+    if mountpoint -q "$NFS_CLIENT_MOUNT"; then
+        greenprint "Директория $NFS_CLIENT_MOUNT уже смонтирована. Пропуск монтирования."
+        df -hT $NFS_CLIENT_MOUNT
+        return 0
+    fi
 
     magentaprint "Монтируем NFS-директорию..."
     mount -t nfs $NFS_SERVER_IP:$NFS_SHARE $NFS_CLIENT_MOUNT
