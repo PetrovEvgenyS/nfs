@@ -1,12 +1,12 @@
 #!/bin/bash
 
 ### Определение цветовых кодов ###
-ESC=$(printf '\033') RESET="${ESC}[0m" BLACK="${ESC}[30m" RED="${ESC}[31m"
-GREEN="${ESC}[32m" YELLOW="${ESC}[33m" BLUE="${ESC}[34m" MAGENTA="${ESC}[35m"
-CYAN="${ESC}[36m" WHITE="${ESC}[37m" DEFAULT="${ESC}[39m"
+ESC=$(printf '\033') RESET="${ESC}[0m" MAGENTA="${ESC}[35m" RED="${ESC}[31m" GREEN="${ESC}[32m"
 
 ### Цветные функции ##
 magentaprint() { echo; printf "${MAGENTA}%s${RESET}\n" "$1"; }
+errorprint() { echo; printf "${RED}%s${RESET}\n" "$1"; }
+greenprint() { echo; printf "${GREEN}%s${RESET}\n" "$1"; }
 
 # Общие переменные
 NFS_SHARE="/var/nfs_share"
@@ -40,7 +40,7 @@ setup_nfs_server() {
     firewall-cmd --reload
     firewall-cmd --list-all
 
-    magentaprint "NFS-сервер настроен!"
+    greenprint "NFS-сервер настроен!"
 }
 
 
@@ -60,8 +60,8 @@ setup_nfs_client() {
     echo "$NFS_SERVER_IP:$NFS_SHARE $NFS_CLIENT_MOUNT nfs defaults 0 0" >> /etc/fstab
     tail -n 1 /etc/fstab
 
-    magentaprint "NFS-клиент настроен!"
-    magentaprint "Директория находится:"
+    greenprint "NFS-клиент настроен!"
+    greenprint "Директория находится:"
     df -hT $NFS_CLIENT_MOUNT
 }
 
